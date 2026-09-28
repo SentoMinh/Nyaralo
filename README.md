@@ -1,140 +1,218 @@
-# Szállásfoglalási platform
+# Nyaraló foglalási rendszer
 
-Reszponzív, többnyelvű szállásfoglalási webalkalmazás az Európai Unió piacára. A platform összekapcsolja a bérlőket és a szállásadókat, és támogatja a szálláskeresést, az online foglalást, a fizetést, az értékeléseket és az adminisztrációt.
+## 1. A projekt célja
 
-> **Projektállapot:** Specifikációs / tervezési fázis
-> **Dokumentumverzió:** 1.0
-> **Utolsó frissítés:** 2026-09-28
+A projekt célja egy egyszerű, reszponzív webalkalmazás létrehozása,
+amely egyetlen nyaraló bemutatását és bérlésének kezelését teszi
+lehetővé.
 
----
+A rendszer segítségével a látogatók megtekinthetik a nyaraló adatait,
+képeit, felszereltségét, árát és a szabad időpontokat. A regisztrált
+vendégek foglalási kérelmet küldhetnek a kívánt időszakra.
 
-## Tartalomjegyzék
+A foglalás nem válik automatikusan véglegessé. A foglalási kérelmet az
+adminisztrátor ellenőrzi, majd elfogadhatja vagy elutasíthatja.
 
-* [Főbb funkciók](#főbb-funkciók)
-* [Felhasználói szerepkörök](#felhasználói-szerepkörök)
-* [Foglalási és fizetési folyamat](#foglalási-és-fizetési-folyamat)
-* [Technológiai stack](#technológiai-stack)
-* [Tervezett modulok](#tervezett-modulok)
-* [Üzemeltetés és biztonság](#üzemeltetés-és-biztonság)
-* [Nyitott döntések](#nyitott-döntések)
-* [Fejlesztési állapot](#fejlesztési-állapot)
+A rendszer nem tartalmaz online bankkártyás vagy egyéb online fizetési
+lehetőséget. A fizetés átutalással vagy készpénzben történik.
 
----
+## 2. Felhasználói szerepkörök
 
-## Főbb funkciók
+A rendszer kétféle felhasználót kezel.
 
-* **Szálláskeresés:** keresés hely, dátum, vendégszám, ár, szobák, fürdőszobák, szállástípus, felszereltség és értékelés alapján.
-* **Térképes keresés:** keresés hely és maximális távolság alapján, illetve térképen kijelölt területen.
-* **Hirdetéskezelés:** teljes apartmanok és külön szobák létrehozása, szerkesztése, szüneteltetése és újraaktiválása.
-* **Rugalmas árazás:** külön HUF- és EUR-árak, kedvezmények, takarítási és egyéb díjak.
-* **Többegységes foglalás:** egy foglaláson belül több egység is kiválasztható ugyanazon szálláshelyen; a vendégszám egységenként adható meg.
-* **Online fizetés:** teljes összeg előre fizetendő, sikeres fizetés után automatikus foglalásmegerősítéssel.
-* **Lemondás és visszatérítés:** a meghatározott feltételek szerinti automatikus teljes visszatérítés.
-* **Belső üzenetküldés:** kommunikáció a bérlő és a szállásadó között sikeres foglalás után.
-* **Értékelések:** értékelést csak teljesült foglalással rendelkező bérlő írhat.
-* **Kedvencek:** szálláshelyek mentése későbbi megtekintéshez.
-* **Értesítések:** e-mailes értesítés többek között a foglalásról, fizetésről, lemondásról és új üzenetről.
-* **Adminisztráció:** felhasználók, hirdetések, foglalások, panaszok és sikertelen fizetések kezelése.
-* **Szállásadói statisztikák:** foglalások, bevétel, kihasználtság és értékelések megjelenítése.
+### 2.1. Vendég
 
-## Felhasználói szerepkörök
+A vendég a rendszer fő felhasználója.
 
-| Szerepkör          | Fő jogosultságok                                                                   |
-| ------------------ | ---------------------------------------------------------------------------------- |
-| **Bérlő**          | Szálláskeresés, foglalás, fizetés, lemondás, üzenetküldés, kedvencek és értékelés  |
-| **Szállásadó**     | Hirdetések, árak, elérhetőség, foglalások, üzenetek és saját statisztikák kezelése |
-| **Adminisztrátor** | Felhasználók, hirdetések, foglalások, panaszok és fizetési problémák felügyelete   |
+**Jogosultságok:** - Regisztráció - Bejelentkezés - A nyaraló adatainak
+megtekintése - Képek megtekintése - Felszereltség megtekintése - Ár
+megtekintése - Házirend megtekintése - Check-in és check-out időpontok
+megtekintése - Szabad és foglalt időpontok megtekintése - Foglalási
+kérelem küldése - Saját foglalások megtekintése
 
-A regisztráció e-mail-címmel és jelszóval történik. Az e-mail-cím megerősítése kötelező.
+A vendég a saját foglalását nem tudja törölni vagy lemondani.
 
-## Foglalási és fizetési folyamat
+### 2.2. Adminisztrátor
 
-1. A bérlő kiválasztja a szálláshelyet és a foglalni kívánt egységeket.
-2. Megadja az érkezés és a távozás dátumát, valamint az egyes egységek vendégszámát.
-3. A rendszer ellenőrzi az elérhetőséget és a minimális éjszakaszámot.
-4. A rendszer kiszámítja a teljes árat, beleértve az alkalmazandó díjakat és kedvezményeket.
-5. A bérlő HUF-ban vagy EUR-ban fizeti ki a teljes összeget, amennyiben a választott pénznemben rendelkezésre áll az ár.
-6. Sikeres fizetés után a foglalás automatikusan megerősödik, a naptár frissül, és az érintettek értesítést kapnak.
+A rendszerben egy adminisztrátori szerepkör található.
 
-**Fontos üzleti szabályok:**
+**Jogosultságok:** - Foglalások megtekintése - Függőben lévő foglalások
+megtekintése - Foglalás elfogadása - Foglalás elutasítása - Foglalás
+lemondása - Fizetési státusz módosítása
 
-* Sikertelen fizetés nem eredményezhet megerősített foglalást.
-* A foglalásnak meg kell akadályoznia az ugyanazon időszakra és egységre történő dupla foglalást.
-* A bérlő az érkezés előtt legalább 48 órával történő lemondás esetén teljes visszatérítésre jogosult.
-* A szállásadó által kezdeményezett lemondás teljes visszatérítést eredményez.
-* A platform nem számít fel jutalékot.
-* A szállásadói kifizetés célja az azonnali teljesítés; ez a kiválasztott fizetési szolgáltató képességeitől függ.
+A nyaraló adatai az alkalmazásban rögzítettek, ezért az adminisztrátor
+ezeket nem módosíthatja.
 
-## Technológiai stack
+## 3. A nyaraló adatai
 
-| Réteg                | Technológia        | Állapot     |
-| -------------------- | ------------------ | ----------- |
-| Frontend             | React              | Kiválasztva |
-| Backend              | NestJS             | Kiválasztva |
-| Adatbázis            | MongoDB            | Kiválasztva |
-| Hosting              | Később választandó | Nyitott     |
-| Fizetési szolgáltató | Később választandó | Nyitott     |
-| Fájltárolás          | Később választandó | Nyitott     |
-| E-mail-szolgáltató   | Később választandó | Nyitott     |
-| Térkép és geokódolás | Később választandó | Nyitott     |
+A rendszer egyetlen nyaralót kezel.
 
-## Tervezett modulok
+**A nyaralóhoz tartozó adatok:** - Név - Részletes leírás -
+Cím/helyszín - Férőhelyek száma - Szobák száma - Fürdőszobák száma -
+Éjszakánkénti ár - Minimum foglalható éjszakák száma - Felszereltség -
+Fényképek - Házirend - Check-in időpont - Check-out időpont
 
-A backend tervezett logikai moduljai:
+A nyaraló adatai fixen kerülnek be az alkalmazásba, és az adminisztrátor
+nem módosíthatja őket.
 
-| Modul           | Felelősség                                                              |
-| --------------- | ----------------------------------------------------------------------- |
-| `auth`          | Regisztráció, bejelentkezés, e-mail-megerősítés és jelszó-visszaállítás |
-| `users`         | Felhasználói profilok és szerepkörök                                    |
-| `listings`      | Szálláshelyek és hirdetések                                             |
-| `units`         | Szobák és apartmanegységek                                              |
-| `search`        | Keresés, szűrés és rendezés                                             |
-| `availability`  | Naptár és elérhetőség                                                   |
-| `bookings`      | Foglalások és foglalási tételek                                         |
-| `payments`      | Fizetési tranzakciók                                                    |
-| `refunds`       | Visszatérítések                                                         |
-| `reviews`       | Értékelések                                                             |
-| `messages`      | Beszélgetések és üzenetek                                               |
-| `favorites`     | Kedvencek                                                               |
-| `complaints`    | Panaszok és bejelentések                                                |
-| `invoices`      | Számlák                                                                 |
-| `notifications` | E-mailes és alkalmazáson belüli értesítések                             |
-| `admin`         | Adminisztrációs műveletek                                               |
-| `audit-logs`    | Biztonsági és üzleti eseménynaplók                                      |
+## 4. Fő funkciók
 
-Ezek tervezett modulok, nem feltétlenül már megvalósított vagy végleges API-végpontok.
+### 4.1. Nyaraló megtekintése
 
-## Üzemeltetés és biztonság
+A kezdőoldal bejelentkezés nélkül is elérhető.
 
-* **Biztonsági mentés:** napi automatikus mentés.
-* **Naplózás:** részletes naplózás, beleértve a bejelentkezéseket, foglalásokat, fizetéseket és adminisztrátori műveleteket.
-* **Feltöltések:** képek és videók támogatása.
-* **Reszponzivitás:** desktop, tablet és mobil támogatása.
-* **Nyelvek:** magyar és angol.
-* **Adatmegőrzés:** az alkalmazandó jogi követelmények szerint.
-* **Jogosultságkezelés:** szerepköralapú hozzáférés; minden védett műveletnél szerveroldali jogosultság-ellenőrzés szükséges.
+A látogató megtekintheti: - A nyaraló nevét - Fényképeit - Leírását -
+Címét/helyszínét - Férőhelyek számát - Szobák és fürdőszobák számát -
+Felszereltségét - Árát - Házirendjét - Check-in/check-out időpontját -
+Foglalási naptárát
 
-A naplózás során a jelszavakat, fizetési kártyaadatokat, hozzáférési tokeneket és más titkos adatokat nem szabad naplózni.
+A foglalási lehetőség használatához a felhasználónak be kell
+jelentkeznie.
 
-## Nyitott döntések
+### 4.2. Regisztráció
 
-Az alábbi kérdések a részletes tervezés vagy a fejlesztés során véglegesítendők:
+Új vendég az alábbi adatok megadásával regisztrálhat: - Név -
+E-mail-cím - Jelszó - Telefonszám
 
-* Hosting- és infrastruktúra-szolgáltató.
-* Fizetési szolgáltató, piactéri kifizetések és tranzakciós díjak kezelése.
-* Fájltárolási és e-mail-szolgáltató.
-* Számlázási és adózási modell, országonkénti megfelelés.
-* A be- és kijelentkezés pontos időpontjai.
-* A 48 órás lemondási határidő pontos időzóna- és határidő-kezelése.
-* Sikertelen fizetéskor az ideiglenes dátumfoglalás és annak lejárata.
-* A népszerűségi rangsor súlyozása.
-* A hirdetés inaktivitásának pontos definíciója.
-* A szállásadói telefonszám és e-mail láthatóságának, illetve használatának szabályai.
-* Értékelési skála és moderálási szabályok.
-* Fájlméret-, formátum- és feltöltési korlátok.
+A rendszer ellenőrzi, hogy az e-mail-cím még nem szerepel-e az
+adatbázisban.
 
-## Fejlesztési állapot
+Sikeres regisztráció után a felhasználó bejelentkezhet.
 
-A projekt jelenleg a követelmények és a műszaki tervezés szintjén áll. A technológiai alapok és a fő üzleti folyamatok meghatározottak, de a szolgáltatói integrációk és több részletszabály még véglegesítésre vár.
+### 4.3. Bejelentkezés
 
-A README a projekt áttekintésére szolgál; a részletes szoftverkövetelmény-specifikációt külön dokumentumban célszerű fenntartani.
+A felhasználó e-mail-cím és jelszó segítségével jelentkezhet be.
+
+Sikeres bejelentkezés után: - **Vendég esetén:** a vendégfunkciók
+érhetők el. - **Admin esetén:** az adminisztrációs felület jelenik meg.
+
+## 5. Foglalás
+
+A vendég a foglalási űrlapon megadhatja: - Érkezés dátuma - Távozás
+dátuma - Vendégek száma - Fizetési mód
+
+A fizetési mód lehet: - Átutalás - Készpénz
+
+A rendszer a kiválasztott időszak alapján kiszámítja a teljes árat.
+
+### Ár számítása
+
+**Teljes ár = éjszakák száma × egy éjszaka ára**
+
+A rendszer ellenőrzi: - A távozás későbbi legyen az érkezésnél. - A
+foglalás érje el a minimum éjszakák számát. - A megadott vendégszám ne
+haladja meg a nyaraló férőhelyét. - A kiválasztott időszakban ne legyen
+már elfogadott foglalás.
+
+Sikeres ellenőrzés után a foglalási kérelem létrejön.
+
+## 6. Foglalás állapotai
+
+A foglalás négy állapotot használ.
+
+  -----------------------------------------------------------------------
+  Állapot                             Leírás
+  ----------------------------------- -----------------------------------
+  **Függőben**                        A vendég elküldte a foglalási
+                                      kérelmet, de az adminisztrátor még
+                                      nem döntött.
+
+  **Elfogadva**                       Az adminisztrátor elfogadta a
+                                      foglalást. Az elfogadott időszak
+                                      foglaltnak számít.
+
+  **Elutasítva**                      Az adminisztrátor elutasította a
+                                      foglalási kérelmet. Az időszak újra
+                                      foglalható.
+
+  **Lemondva**                        Az adminisztrátor lemondta a
+                                      foglalást. Az időszak újra
+                                      foglalható.
+  -----------------------------------------------------------------------
+
+## 7. Fizetés kezelése
+
+A rendszerben nincs online fizetés.
+
+A vendég két fizetési mód közül választhat: - Átutalás - Készpénz
+
+**A fizetés állapota:** - Nincs fizetve - Fizetésre vár - Fizetve
+
+A fizetési státuszt az adminisztrátor módosíthatja.
+
+Átutalás esetén a rendszerben megjeleníthető az előre meghatározott
+bankszámlaszám, amelyre a vendég az összeget átutalhatja.
+
+## 8. Foglalási naptár
+
+A kezdőlapon egy egyszerű naptár jelenik meg.
+
+A naptárban megkülönböztethetők: - Szabad időpontok - Foglalt időpontok
+
+A foglalási kérelem elküldése előtt a rendszer ellenőrzi az adott
+időszakot.
+
+Csak az elfogadott foglalások tekintendők véglegesen foglaltnak. A
+függőben lévő, elutasított vagy lemondott foglalások időszaka nem számít
+véglegesen foglaltnak.
+
+## 9. Adminisztrációs felület
+
+Az admin bejelentkezés után egy egyszerű foglaláskezelő felületet lát.
+
+Az admin számára megjelennek a foglalások legfontosabb adatai: -
+Foglalás azonosítója - Vendég neve - Vendég e-mail-címe - Vendég
+telefonszáma - Érkezés - Távozás - Vendégek száma - Teljes ár - Foglalás
+létrehozásának időpontja - Foglalás státusza - Fizetési mód - Fizetési
+státusz
+
+Az admin a foglalásokat: - Elfogadhatja - Elutasíthatja - Lemondhatja -
+Fizetettként jelölheti
+
+## 10. Felhasználói felület
+
+A rendszer egyszerű, reszponzív webes felületet használ.
+
+### Kezdőlap
+
+-   Nyaraló bemutatása
+-   Képgaléria
+-   Felszereltség
+-   Ár
+-   Házirend
+-   Check-in/check-out
+-   Foglalási naptár
+-   Foglalás gomb
+-   Bejelentkezés/regisztráció lehetőség
+
+### Bejelentkezés
+
+-   E-mail
+-   Jelszó
+-   Bejelentkezés gomb
+
+### Regisztráció
+
+-   Név
+-   E-mail
+-   Jelszó
+-   Telefonszám
+-   Regisztráció gomb
+
+### Foglalás
+
+-   Érkezési dátum
+-   Távozási dátum
+-   Vendégek száma
+-   Fizetési mód
+-   Számított teljes ár
+-   Foglalás elküldése gomb
+
+### Admin felület
+
+-   Foglalások listája
+-   Foglalás részletei
+-   Elfogadás
+-   Elutasítás
+-   Lemondás
+-   Fizetési státusz módosítása
