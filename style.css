@@ -1,0 +1,60 @@
+/* Nyaraló Foglalási Rendszer - Egyedi stílusok */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Finom megjelenési animáció */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Extra finomítások a jobb megjelenéshez */
+input:focus,
+select:focus {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+button {
+  transition: all 0.2s ease;
+}
+
+.hero-background {
+  background-image: url('nyaralo.png');   
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 280px;
+  position: relative;
+}
+
+/* Táblázat sor hover finomítása */
+#bookings-table tr:hover {
+      background-color: #f8fafc;
+}
+
+/* Reszponzív finomhangolás kisebb képernyőkre */
+@media (max-width: 640px) {
+  nav .flex.gap-2 button {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  #page-booking form {
+    padding: 1.5rem;
+  }
+}
