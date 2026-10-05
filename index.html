@@ -1,191 +1,187 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nyaraló Foglalási Rendszer</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Balatoni Nyaraló – Foglalás</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+<body class="bg-gray-50 text-gray-800">
 
-  <!-- NAVBAR -->
-  <nav class="bg-white shadow-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <i class="fas fa-home text-2xl text-blue-600"></i>
-        <h1 class="text-xl font-bold text-slate-800">Nyaraló Foglalás</h1>
-      </div>
-      <div class="flex gap-2">
-        <button onclick="showPage('booking')" id="btn-booking" class="px-4 py-2 rounded-lg font-medium bg-blue-600 text-white">
-          <i class="fas fa-calendar-plus mr-1"></i> Foglalás
-        </button>
-        <button onclick="showPage('admin')" id="btn-admin" class="px-4 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-100">
-          <i class="fas fa-user-shield mr-1"></i> Admin
-        </button>
-      </div>
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-blue-700" id="nyaralo-nev">Balatoni Nyaraló</h1>
+      <button onclick="document.getElementById('booking-modal').classList.remove('hidden')"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium flex items-center gap-2">
+        <i data-lucide="calendar-check"></i> Foglalás
+      </button>
     </div>
-  </nav>
+  </header>
 
-  <main class="max-w-6xl mx-auto px-4 py-8">
+  <main class="max-w-6xl mx-auto px-4 py-8 space-y-12">
 
-    <!-- ==================== FOGLALÁSI ŰRLAP ==================== -->
-    <section id="page-booking" class="fade-in">
-      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6 text-white">
-          <h2 class="text-2xl font-bold">Új foglalás</h2>
-          <p class="opacity-90 mt-1">Töltsd ki az alábbi adatokat a nyaraló lefoglalásához</p>
-        </div>
-
-        <form id="booking-form" class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Név *</label>
-            <input type="text" name="nev" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Kovács János">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Email *</label>
-            <input type="email" name="email" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="kovacs@email.hu">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Telefon *</label>
-            <input type="tel" name="telefon" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="+36 30 123 4567">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Vendégek száma *</label>
-            <input type="number" name="vendegek_szama" min="1" max="20" value="2" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Érkezés *</label>
-            <input type="date" name="erkezes" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Távozás *</label>
-            <input type="date" name="tavozas" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Fizetési mód *</label>
-            <select name="fizetesi_mod" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-              <option value="Átutalás">Átutalás</option>
-              <option value="Készpénz">Készpénz</option>
-            </select>
-          </div>
-
-          <div class="bg-blue-50 rounded-xl p-4 flex flex-col justify-center">
-            <p class="text-sm text-slate-600">Becsült teljes ár</p>
-            <p id="calculated-price" class="text-3xl font-bold text-blue-700">0 Ft</p>
-            <p class="text-xs text-slate-500 mt-1">15 000 Ft / éjszaka</p>
-          </div>
-
-          <div class="md:col-span-2">
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
-              <i class="fas fa-paper-plane"></i> Foglalás elküldése
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Sikeres foglalás üzenet -->
-      <div id="success-msg" class="hidden mt-6 bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-xl flex items-center gap-3">
-        <i class="fas fa-check-circle text-2xl"></i>
-        <div>
-          <p class="font-semibold">Foglalás sikeresen elküldve!</p>
-          <p class="text-sm">Hamarosan visszajelzünk az email címedre.</p>
+    <!-- Galéria -->
+    <section>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 rounded-xl overflow-hidden shadow-lg">
+        <img id="main-img" src="" alt="Nyaraló" class="w-full h-80 object-cover" />
+        <div class="grid grid-cols-2 gap-2">
+          <img class="gallery-thumb w-full h-40 object-cover cursor-pointer" />
+          <img class="gallery-thumb w-full h-40 object-cover cursor-pointer" />
+          <img class="gallery-thumb w-full h-40 object-cover cursor-pointer" />
+          <img class="gallery-thumb w-full h-40 object-cover cursor-pointer" />
         </div>
       </div>
     </section>
 
-    <!-- ==================== ADMIN OLDAL ==================== -->
-    <section id="page-admin" class="hidden fade-in">
-
-      <!-- Bejelentkezés -->
-      <div id="login-box" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8">
-        <div class="text-center mb-6">
-          <i class="fas fa-lock text-4xl text-blue-600 mb-3"></i>
-          <h2 class="text-2xl font-bold text-slate-800">Admin bejelentkezés</h2>
-        </div>
-        <form id="login-form" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Felhasználónév</label>
-            <input type="text" id="login-user" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="admin">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Jelszó</label>
-            <input type="password" id="login-pass" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="••••••••">
-          </div>
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition">
-            Bejelentkezés
-          </button>
-          <p id="login-error" class="text-red-600 text-sm text-center hidden">Hibás felhasználónév vagy jelszó!</p>
-        </form>
-        <p class="text-xs text-slate-400 text-center mt-4">Alapértelmezett: admin / admin123</p>
+    <!-- Alapadatok -->
+    <section class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-xl font-semibold mb-4">Alapadatok</h2>
+        <ul class="space-y-2 text-sm">
+          <li class="flex gap-2"><i data-lucide="map-pin" class="w-4"></i> <span id="cim"></span></li>
+          <li class="flex gap-2"><i data-lucide="users" class="w-4"></i> <span id="ferőhely"></span> fő</li>
+          <li class="flex gap-2"><i data-lucide="bed" class="w-4"></i> <span id="szobak"></span> szoba</li>
+          <li class="flex gap-2"><i data-lucide="bath" class="w-4"></i> <span id="furdoszobak"></span> fürdőszoba</li>
+          <li class="flex gap-2"><i data-lucide="clock" class="w-4"></i> Check-in: <span id="checkin"></span></li>
+          <li class="flex gap-2"><i data-lucide="clock" class="w-4"></i> Check-out: <span id="checkout"></span></li>
+        </ul>
       </div>
 
-      <!-- Dashboard -->
-      <div id="dashboard" class="hidden">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h2 class="text-2xl font-bold text-slate-800">Foglalások kezelése</h2>
-            <p class="text-slate-500 text-sm">Összes foglalás: <span id="total-count" class="font-semibold">0</span></p>
-          </div>
-          <button onclick="logout()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-medium transition">
-            <i class="fas fa-sign-out-alt mr-1"></i> Kijelentkezés
-          </button>
-        </div>
-
-        <!-- Szűrők -->
-        <div class="bg-white rounded-xl shadow p-4 mb-6 flex flex-wrap gap-3">
-          <select id="filter-status" onchange="renderBookings()" class="px-3 py-2 border rounded-lg text-sm">
-            <option value="">Minden státusz</option>
-            <option value="Függőben">Függőben</option>
-            <option value="Elfogadva">Elfogadva</option>
-            <option value="Elutasítva">Elutasítva</option>
-            <option value="Lemondva">Lemondva</option>
-          </select>
-          <select id="filter-payment" onchange="renderBookings()" class="px-3 py-2 border rounded-lg text-sm">
-            <option value="">Minden fizetés</option>
-            <option value="Nincs fizetve">Nincs fizetve</option>
-            <option value="Fizetésre vár">Fizetésre vár</option>
-            <option value="Fizetve">Fizetve</option>
-          </select>
-        </div>
-
-        <!-- Táblázat -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
-                <tr>
-                  <th class="px-4 py-3 text-left">ID</th>
-                  <th class="px-4 py-3 text-left">Név / Kapcsolat</th>
-                  <th class="px-4 py-3 text-left">Időszak</th>
-                  <th class="px-4 py-3 text-left">Vendég</th>
-                  <th class="px-4 py-3 text-left">Ár</th>
-                  <th class="px-4 py-3 text-left">Státusz</th>
-                  <th class="px-4 py-3 text-left">Fizetés</th>
-                  <th class="px-4 py-3 text-left">Műveletek</th>
-                </tr>
-              </thead>
-              <tbody id="bookings-table" class="divide-y divide-slate-100">
-                <!-- JS tölti -->
-              </tbody>
-            </table>
-          </div>
-          <div id="empty-state" class="hidden py-16 text-center text-slate-400">
-            <i class="fas fa-inbox text-5xl mb-3"></i>
-            <p>Még nincsenek foglalások</p>
-          </div>
+      <div class="bg-white p-6 rounded-xl shadow md:col-span-2">
+        <h2 class="text-xl font-semibold mb-3">Leírás</h2>
+        <p id="leiras" class="text-gray-600 leading-relaxed"></p>
+        <div class="mt-4 flex items-center gap-4">
+          <span class="text-3xl font-bold text-blue-600" id="ar"></span>
+          <span class="text-gray-500">/ éjszaka</span>
+          <span class="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">Min. <span id="min-ejszaka"></span> éjszaka</span>
         </div>
       </div>
+    </section>
+
+    <!-- Felszereltség -->
+    <section class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4">Felszereltség</h2>
+      <div id="felszereltseg" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+    </section>
+
+    <!-- Házirend -->
+    <section class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4">Házirend</h2>
+      <ul id="hazirend" class="list-disc list-inside space-y-1 text-gray-700"></ul>
+    </section>
+
+    <!-- Naptár -->
+    <section class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4">Szabad időpontok</h2>
+      <div id="calendar" class="overflow-x-auto"></div>
+      <p class="text-sm text-gray-500 mt-3">
+        <span class="inline-block w-4 h-4 bg-green-200 rounded mr-1"></span> Szabad
+        <span class="inline-block w-4 h-4 bg-red-300 rounded ml-4 mr-1"></span> Foglalt (elfogadott)
+      </p>
     </section>
   </main>
 
-  <script src="script.js"></script>
+  <!-- Foglalási Modal -->
+  <div id="booking-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Foglalási kérelem</h2>
+        <button onclick="closeModal()" class="text-gray-500 hover:text-gray-800">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <form id="booking-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Név *</label>
+          <input type="text" name="nev" required class="w-full border rounded-lg px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">E-mail *</label>
+          <input type="email" name="email" required class="w-full border rounded-lg px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Telefonszám *</label>
+          <input type="tel" name="telefon" required class="w-full border rounded-lg px-3 py-2" />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Érkezés *</label>
+            <input type="date" name="erkezes" required class="w-full border rounded-lg px-3 py-2" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Távozás *</label>
+            <input type="date" name="tavozas" required class="w-full border rounded-lg px-3 py-2" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Vendégek száma *</label>
+          <input type="number" name="vendegek" min="1" max="6" required class="w-full border rounded-lg px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Fizetési mód *</label>
+          <select name="fizetesiMod" required class="w-full border rounded-lg px-3 py-2">
+            <option value="atutalas">Átutalás</option>
+            <option value="keszpenz">Készpénz</option>
+          </select>
+        </div>
+
+        <div class="bg-blue-50 p-4 rounded-lg">
+          <p class="text-sm">Teljes összeg: <span id="osszeg" class="font-bold text-lg">0 Ft</span></p>
+          <p class="text-xs text-gray-600 mt-1" id="ejszakak-szama"></p>
+        </div>
+
+        <div id="error-msg" class="hidden text-red-600 text-sm"></div>
+
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium">
+          Foglalási kérelem elküldése
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/booking.js"></script>
+  <script>
+    // Init
+    document.getElementById('nyaralo-nev').textContent = NYARALO.nev;
+    document.getElementById('cim').textContent = NYARALO.cim;
+    document.getElementById('ferőhely').textContent = NYARALO.ferőhely;
+    document.getElementById('szobak').textContent = NYARALO.szobak;
+    document.getElementById('furdoszobak').textContent = NYARALO.furdoszobak;
+    document.getElementById('checkin').textContent = NYARALO.checkIn;
+    document.getElementById('checkout').textContent = NYARALO.checkOut;
+    document.getElementById('leiras').textContent = NYARALO.leiras;
+    document.getElementById('ar').textContent = NYARALO.arEjszaka.toLocaleString('hu-HU') + ' Ft';
+    document.getElementById('min-ejszaka').textContent = NYARALO.minEjszaka;
+
+    // Galéria
+    const imgs = document.querySelectorAll('.gallery-thumb');
+    document.getElementById('main-img').src = NYARALO.kepek[0];
+    NYARALO.kepek.forEach((src, i) => {
+      if (imgs[i]) {
+        imgs[i].src = src;
+        imgs[i].onclick = () => document.getElementById('main-img').src = src;
+      }
+    });
+
+    // Felszereltség
+    const felsz = document.getElementById('felszereltseg');
+    NYARALO.felszereltseg.forEach(item => {
+      felsz.innerHTML += `<div class="flex items-center gap-2 text-sm"><i data-lucide="check" class="w-4 text-green-600"></i>${item}</div>`;
+    });
+
+    // Házirend
+    const haz = document.getElementById('hazirend');
+    NYARALO.hazirend.forEach(r => haz.innerHTML += `<li>${r}</li>`);
+
+    lucide.createIcons();
+    initCalendar();
+  </script>
 </body>
 </html>
