@@ -1,0 +1,29 @@
+{
+  "name": "nyaralo",
+  "version": "1.0.0",
+  "description": "A projekt célja egy egyszerű, reszponzív webalkalmazás létrehozása,\r amely egyetlen nyaraló bemutatását és foglalását teszi lehetővé.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SentoMinh/Nyaralo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SentoMinh/Nyaralo/issues"
+  },
+  "homepage": "https://github.com/SentoMinh/Nyaralo#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "sqlite3": "^6.0.1"
+  }
+}
