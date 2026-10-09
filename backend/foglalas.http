@@ -1,132 +1,247 @@
 ### ============================================================
-### Balatoni Nyaraló – Foglalási REST API tesztek
-### Használat: VS Code + REST Client extension
+### Balatoni Nyaraló – REST API tesztek
+### Használat: VS Code + REST Client bővítmény
 ### ============================================================
 
 @baseUrl = http://localhost:3000
 @contentType = application/json
 
-### ----------------------------------------------------------
-### 1. Sikeres foglalási kérelem (happy path)
-### Elvárt: 201 Created vagy 200 OK + foglalás azonosító
-### ----------------------------------------------------------
-POST {{baseUrl}}/api/foglalas
+### ============================================================
+### I. FOGLALÁSOK KEZELÉSE (/api/bookings)
+### ============================================================
+
+### ------------------------------------------------------------
+### 1. Összes foglalás listázása (Admin nézethez)
+### Elvárt: 200 OK + foglalások tömbje
+### ------------------------------------------------------------
+GET {{baseUrl}}/api/bookings
+Accept: application/json
+
+### ------------------------------------------------------------
+### 2. Csak az elfogadott foglalások lekérése (Naptár nézethez)
+### Elvárt: 200 OK + csak erkezes és tavozas mezők
+### ------------------------------------------------------------
+GET {{baseUrl}}/api/bookings?status=elfogadva
+Accept: application/json
+
+### ------------------------------------------------------------
+### 3. Sikeres foglalási kérelem beküldése (Happy path)
+### Elvárt: 201 Created + { id: ..., message: "Foglalási kérelem rögzítve." }
+### ------------------------------------------------------------
+# @name createBooking
+POST {{baseUrl}}/api/bookings
 Content-Type: {{contentType}}
 
 {
   "nev": "Teszt Elek",
   "email": "teszt.elek@example.com",
   "telefon": "+36301234567",
-  "erkezes": "2026-07-15",
-  "tavozas": "2026-07-18",
+  "erkezes": "2026-12-01",
+  "tavozas": "2026-12-05",
   "vendegek": 4,
-  "fizetesiMod": "atutalas"
+  "fizetesiMod": "atutalas",
+  "osszeg": 112000
 }
 
-### ----------------------------------------------------------
-### 2. Hiányzó kötelező mező (név nélkül)
-### Elvárt: 400 Bad Request + hibaüzenet
-### ----------------------------------------------------------
-POST {{baseUrl}}/api/foglalas
-Content-Type: {{contentType}}
-
-{
-  "email": "teszt@example.com",
-  "telefon": "+36301234567",
-  "erkezes": "2026-07-15",
-  "tavozas": "2026-07-18",
-  "vendegek": 2,
-  "fizetesiMod": "keszpenz"
-}
-
-### ----------------------------------------------------------
-### 3. Érvénytelen e-mail formátum
+### ------------------------------------------------------------
+### 4. Validáció: Hiányzó kötelező mezők (pl. név hiányzik)
 ### Elvárt: 400 Bad Request
-### ----------------------------------------------------------
-POST {{baseUrl}}/api/foglalas
+### ------------------------------------------------------------
+POST {{baseUrl}}/api/bookings
 Content-Type: {{contentType}}
 
 {
-  "nev": "Teszt Elek",
-  "email": "nem-email",
+  "email": "teszt@example.com",
   "telefon": "+36301234567",
-  "erkezes": "2026-07-15",
-  "tavozas": "2026-07-18",
+  "erkezes": "2026-12-10",
+  "tavozas": "2026-12-12",
   "vendegek": 2,
-  "fizetesiMod": "atutalas"
+  "fizetesiMod": "keszpenz",
+  "osszeg": 56000
 }
 
-### ----------------------------------------------------------
-### 4. Vendégszám túl nagy (max 6 a HTML szerint)
+### ------------------------------------------------------------
+### 5. Validáció: Hibás dátumok (távozás korábbi az érkezésnél)
 ### Elvárt: 400 Bad Request
-### ----------------------------------------------------------
-POST {{baseUrl}}/api/foglalas
+### ------------------------------------------------------------
+POST {{baseUrl}}/api/bookings
 Content-Type: {{contentType}}
 
 {
-  "nev": "Teszt Elek",
-  "email": "teszt@example.com",
+  "nev": "Hibás Dátum",
+  "email": "hiba@example.com",
   "telefon": "+36301234567",
-  "erkezes": "2026-07-15",
-  "tavozas": "2026-07-18",
-  "vendegek": 10,
-  "fizetesiMod": "atutalas"
-}
-
-### ----------------------------------------------------------
-### 5. Távozás korábbi, mint az érkezés
-### Elvárt: 400 Bad Request
-### ----------------------------------------------------------
-POST {{baseUrl}}/api/foglalas
-Content-Type: {{contentType}}
-
-{
-  "nev": "Teszt Elek",
-  "email": "teszt@example.com",
-  "telefon": "+36301234567",
-  "erkezes": "2026-07-20",
-  "tavozas": "2026-07-15",
+  "erkezes": "2026-12-15",
+  "tavozas": "2026-12-10",
   "vendegek": 2,
-  "fizetesiMod": "keszpenz"
+  "fizetesiMod": "keszpenz",
+  "osszeg": 56000
 }
 
-### ----------------------------------------------------------
-### 6. Minimum éjszaka alatti foglalás (min. 2 éjszaka)
+### ------------------------------------------------------------
+### 6. Validáció: Érvénytelen vendégszám (0 vagy negatív)
 ### Elvárt: 400 Bad Request
-### ----------------------------------------------------------
-POST {{baseUrl}}/api/foglalas
+### ------------------------------------------------------------
+POST {{baseUrl}}/api/bookings
 Content-Type: {{contentType}}
 
 {
   "nev": "Teszt Elek",
   "email": "teszt@example.com",
   "telefon": "+36301234567",
-  "erkezes": "2026-07-15",
-  "tavozas": "2026-07-16",
+  "erkezes": "2026-12-15",
+  "tavozas": "2026-12-18",
+  "vendegek": 0,
+  "fizetesiMod": "atutalas",
+  "osszeg": 84000
+}
+
+### ------------------------------------------------------------
+### 7. Validáció: Érvénytelen fizetési mód
+### Elvárt: 400 Bad Request
+### ------------------------------------------------------------
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "nev": "Teszt Elek",
+  "email": "teszt@example.com",
+  "telefon": "+36301234567",
+  "erkezes": "2026-12-15",
+  "tavozas": "2026-12-18",
   "vendegek": 2,
-  "fizetesiMod": "atutalas"
+  "fizetesiMod": "bitcoin",
+  "osszeg": 84000
 }
 
-### ----------------------------------------------------------
-### 7. Már foglalt időszak (ha van naptár / ütközésellenőrzés)
-### Elvárt: 409 Conflict
-### ----------------------------------------------------------
-POST {{baseUrl}}/api/foglalas
+### ------------------------------------------------------------
+### 8. Validáció: Érvénytelen összeg (<= 0 vagy hiányzik)
+### Elvárt: 400 Bad Request
+### ------------------------------------------------------------
+POST {{baseUrl}}/api/bookings
 Content-Type: {{contentType}}
 
 {
   "nev": "Teszt Elek",
   "email": "teszt@example.com",
   "telefon": "+36301234567",
-  "erkezes": "2026-08-01",
-  "tavozas": "2026-08-05",
-  "vendegek": 3,
-  "fizetesiMod": "atutalas"
+  "erkezes": "2026-12-15",
+  "tavozas": "2026-12-18",
+  "vendegek": 2,
+  "fizetesiMod": "atutalas",
+  "osszeg": 0
 }
 
-### ----------------------------------------------------------
-### 8. Foglalások listázása (ha van GET végpont)
-### Elvárt: 200 OK + tömb
-### ----------------------------------------------------------
-GET {{baseUrl}}/api/foglalas
+### ------------------------------------------------------------
+### 9. Ütközésvizsgálat: Időpont ütközik elfogadott foglalással
+### (Megjegyzés: 2026-10-09 és 2026-10-12 között már van elfogadott foglalás)
+### Elvárt: 409 Conflict + "A választott időszak már foglalt."
+### ------------------------------------------------------------
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "nev": "Ütköző Vendég",
+  "email": "utkozik@example.com",
+  "telefon": "+36309876543",
+  "erkezes": "2026-10-10",
+  "tavozas": "2026-10-13",
+  "vendegek": 2,
+  "fizetesiMod": "atutalas",
+  "osszeg": 84000
+}
+
+### ============================================================
+### II. FOGLALÁS MÓDOSÍTÁSA (/api/bookings/:id)
+### ============================================================
+
+### ------------------------------------------------------------
+### 10. Foglalás státuszának módosítása (elfogadás / elutasítás / lemondás)
+### Elvárt: 200 OK + { message: "Státusz módosítva." }
+### ------------------------------------------------------------
+PATCH {{baseUrl}}/api/bookings/1/status
+Content-Type: {{contentType}}
+
+{
+  "statusz": "elfogadva"
+}
+
+### ------------------------------------------------------------
+### 11. Foglalás státuszának módosítása – Érvénytelen státuszkód
+### Elvárt: 400 Bad Request + "Érvénytelen státusz!"
+### ------------------------------------------------------------
+PATCH {{baseUrl}}/api/bookings/1/status
+Content-Type: {{contentType}}
+
+{
+  "statusz": "ervenytelen"
+}
+
+### ------------------------------------------------------------
+### 12. Fizetési státusz módosítása (nincs / var / fizetve)
+### Elvárt: 200 OK + { message: "Fizetési státusz módosítva." }
+### ------------------------------------------------------------
+PATCH {{baseUrl}}/api/bookings/1/payment
+Content-Type: {{contentType}}
+
+{
+  "fizetes": "fizetve"
+}
+
+### ------------------------------------------------------------
+### 13. Fizetési státusz módosítása – Nem létező foglalás azonosító
+### Elvárt: 404 Not Found + "Nincs ilyen foglalás!"
+### ------------------------------------------------------------
+PATCH {{baseUrl}}/api/bookings/999999/payment
+Content-Type: {{contentType}}
+
+{
+  "fizetes": "fizetve"
+}
+
+### ============================================================
+### III. ADMIN AUTHENTIKÁCIÓ ÉS FELHASZNÁLÓK (/users)
+### ============================================================
+
+### ------------------------------------------------------------
+### 14. Sikeres admin bejelentkezés
+### Elvárt: 200 OK + JWT token
+### ------------------------------------------------------------
+# @name login
+POST {{baseUrl}}/users/login
+Content-Type: {{contentType}}
+
+{
+  "felhasznalonev": "admin",
+  "jelszo": "admin123"
+}
+
+### Token változó mentése a bejelentkezés válaszából
+@token = {{login.response.body.token}}
+
+### ------------------------------------------------------------
+### 15. Sikertelen bejelentkezés (helytelen jelszó)
+### Elvárt: 401 Unauthorized
+### ------------------------------------------------------------
+POST {{baseUrl}}/users/login
+Content-Type: {{contentType}}
+
+{
+  "felhasznalonev": "admin",
+  "jelszo": "rosszjelszo"
+}
+
+### ------------------------------------------------------------
+### 16. Védett felhasználólista lekérése token nélkül
+### Elvárt: 401 Unauthorized + "Azonosítás szükséges!"
+### ------------------------------------------------------------
+GET {{baseUrl}}/users
+Accept: application/json
+
+### ------------------------------------------------------------
+### 17. Védett felhasználólista lekérése érvényes Bearer tokennel
+### Elvárt: 200 OK + adminok listája
+### ------------------------------------------------------------
+GET {{baseUrl}}/users
+Authorization: Bearer {{token}}
 Accept: application/json
