@@ -4,7 +4,8 @@
   "description": "A projekt célja egy egyszerű, reszponzív webalkalmazás létrehozása,\r amely egyetlen nyaraló bemutatását és foglalását teszi lehetővé.",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "init-db": "node -e \"const fs=require('fs'),s=require('sqlite3'),p=require('path');const db=new s.Database(p.resolve('../database/nyaralo.db'));db.exec(fs.readFileSync('../database/database.sql','utf8')+';'+fs.readFileSync('../database/tesztadatok.sql','utf8'),err=>{if(err)console.error(err);else console.log('Adatbázis létrehozva és tesztadatok betöltve!');});\""
   },
   "repository": {
     "type": "git",

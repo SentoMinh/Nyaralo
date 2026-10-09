@@ -1,10 +1,23 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sqlite3 = require("sqlite3");
-require("dotenv").config({ path: path.resolve(__dirname, ".env") });
+
+// .env betöltése backend/.env vagy gyökér .env fájlból
+const envFiles = [
+    path.resolve(__dirname, ".env"),
+    path.resolve(process.cwd(), ".env"),
+    path.resolve(process.cwd(), "backend/.env")
+];
+for (const envFile of envFiles) {
+    if (fs.existsSync(envFile)) {
+        require("dotenv").config({ path: envFile });
+        break;
+    }
+}
 
 const app = express();
 app.use(express.json());
@@ -19,11 +32,76 @@ app.get("/admin", (req, res) => {
     res.sendFile(path.resolve(__dirname, "../frontend/admin.html"));
 });
 
-const dbPath = process.env.DATABASE
-    ? (path.isAbsolute(process.env.DATABASE) ? process.env.DATABASE : path.resolve(__dirname, process.env.DATABASE))
-    : path.resolve(__dirname, '../database/nyaralo.db');
+// Adatbázis elérési útjának megbízható felderítése
+function findDbPath() {
+    const candidates = [
+        process.env.DATABASE && path.isAbsolute(process.env.DATABASE) ? process.env.DATABASE : null,
+        process.env.DATABASE ? path.resolve(__dirname, process.env.DATABASE) : null,
+        process.env.DATABASE ? path.resolve(process.cwd(), process.env.DATABASE) : null,
+        path.resolve(__dirname, "../database/nyaralo.db"),
+        path.resolve(process.cwd(), "database/nyaralo.db"),
+        path.resolve(process.cwd(), "nyaralo.db")
+    ].filter(Boolean);
 
-const db = new sqlite3.Database(dbPath);
+    for (const candidate of candidates) {
+        if (fs.existsSync(candidate) && fs.statSync(candidate).size > 0) {
+            return candidate;
+        }
+    }
+    return path.resolve(__dirname, "../database/nyaralo.db");
+}
+
+const dbPath = findDbPath();
+
+// Könyvtár biztosítása, ha nem létezik
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+}
+
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+        console.error("Adatbázis hiba:", err.message);
+    }
+});
+
+// Automatikus séma- és tesztadat-inicializálás, ha a táblák nem léteznek
+db.serialize(() => {
+    const schemaCandidates = [
+        path.resolve(__dirname, "../database/database.sql"),
+        path.resolve(process.cwd(), "database/database.sql"),
+        path.resolve(process.cwd(), "database.sql")
+    ];
+    const schemaFile = schemaCandidates.find(f => fs.existsSync(f));
+    if (schemaFile) {
+        const schemaSql = fs.readFileSync(schemaFile, "utf8");
+        db.exec(schemaSql, (err) => {
+            if (err) {
+                console.error("Hiba az adatbázis séma létrehozásakor:", err.message);
+            } else {
+                // Ellenőrzés: ha üres a foglalasok tábla, töltsük be az alapértelmezett tesztadatokat
+                db.get("SELECT COUNT(*) AS count FROM foglalasok", (countErr, row) => {
+                    if (!countErr && row && row.count === 0) {
+                        const seedCandidates = [
+                            path.resolve(__dirname, "../database/tesztadatok.sql"),
+                            path.resolve(process.cwd(), "database/tesztadatok.sql"),
+                            path.resolve(process.cwd(), "tesztadatok.sql")
+                        ];
+                        const seedFile = seedCandidates.find(f => fs.existsSync(f));
+                        if (seedFile) {
+                            const seedSql = fs.readFileSync(seedFile, "utf8");
+                            db.exec(seedSql, (seedErr) => {
+                                if (!seedErr) {
+                                    console.log("Alapértelmezett tesztadatok sikeresen betöltve.");
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
 
 // token ellenőrzése middleware-rel (forma: Bearer token)
 function authenticateToken(req, res, next) {
