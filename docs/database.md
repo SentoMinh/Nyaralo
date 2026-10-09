@@ -91,6 +91,8 @@ hozzányúlni.
 
 ## 3. Az adatbázis létrehozása
 
+> **Tipp:** A backend szerver indításakor (`npm start`) automatikusan létrehozza a táblákat és betölti az alapértelmezett tesztadatokat, amennyiben az adatbázis még nem létezik. Manuális újrainicializáláshoz az `npm run init-db` parancs is használható.
+
 `npm install` után, a projekt gyökerében:
 
 **1. Táblák létrehozása**

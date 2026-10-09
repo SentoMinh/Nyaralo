@@ -191,3 +191,12 @@ Nyaralo/
 ├── package.json              # Gyökér szintű npm konfiguráció és indító parancsok
 └── README.md                 # Általános projektismertető
 ```
+
+### Gyors indítás (Quick start)
+
+```bash
+npm install
+npm start
+```
+> Az adatbázis táblái és a tesztadatok az első indításkor automatikusan létrejönnek. Szükség esetén az `npm run init-db` paranccsal bármikor újrainicializálható az adatbázis.
+
