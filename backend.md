@@ -10,12 +10,13 @@ A backend Node.js környezetben, az Express.js keretrendszer segítségével ké
 
 A backend fejlesztése során a következő technológiákat és csomagokat használjuk:
 
-* **Node.js:** Lehetővé teszi a JavaScript szerveroldali futtatását.
-* **Express.js:** A szerver létrehozására, valamint a HTTP-kérések és API-végpontok kezelésére szolgál.
-* **bcrypt:** A jelszavak biztonságos hash-elésére és ellenőrzésére használjuk.
-* **jsonwebtoken (JWT):** A felhasználók azonosítására és a tokenek ellenőrzésére szolgál.
-* **cors:** A különböző eredetű kérések kezelését teszi lehetővé.
-* **dotenv:** A környezeti változók betöltésére szolgál a `.env` fájlból.
+Node.js: A JavaScript-kód szerveroldali futtatókörnyezete.
+Express.js: A HTTP-szerver és az API-végpontok létrehozására használt keretrendszer.
+sqlite3: Node.js-csomag, amely lehetővé teszi az SQLite használatát a backendben.
+bcrypt: A jelszavak biztonságos hash-elésére és a bejelentkezés során történő ellenőrzésére szolgál.
+jsonwebtoken (JWT): A hitelesítési tokenek létrehozását és ellenőrzését biztosítja.
+cors: Lehetővé teszi a megfelelő, különböző eredetű címekről érkező kérések kezelését.
+dotenv: A környezeti változók betöltésére szolgál, például a konfigurációs adatok kezeléséhez.
 
 ## 3. A szerver felépítése
 
