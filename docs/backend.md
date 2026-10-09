@@ -20,7 +20,7 @@ dotenv: A környezeti változók betöltésére szolgál, például a konfigurá
 
 ## 3. A szerver felépítése
 
-A backend központi fájlja a `server.js`, amely tartalmazza a szerver inicializálását, a különböző végpontokat, a foglalások kezelését és a bejelentkezési folyamatot.
+A backend központi fájlja a `backend/app.js`, amely tartalmazza a szerver inicializálását, a különböző végpontokat, a foglalások kezelését és a bejelentkezési folyamatot.
 
 A szerver az Express keretrendszer segítségével indul el. Az `express.json()` middleware lehetővé teszi a JSON-formátumú kérések adatainak feldolgozását. A `cors()` middleware pedig a CORS-beállítások szerinti kéréseket engedélyezi.
 

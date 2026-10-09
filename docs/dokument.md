@@ -18,13 +18,13 @@ A backend a következő technológiákat használja:
 
 ## 2. A backend felépítése
 
-A szerver fő fájlja a `server.js`. Ez felel az alkalmazás elindításáért, az adatbázis-kapcsolat létrehozásáért és az API-végpontok működtetéséért.
+A szerver fő fájlja a `backend/app.js`. Ez felel az alkalmazás elindításáért, az adatbázis-kapcsolat létrehozásáért és az API-végpontok működtetéséért.
 
 A frontendhez kapcsolódó JavaScript-fájlok:
 
-* `js/booking.js`: A foglalási űrlap kezelése és az adatok elküldése.
-* `js/calendar.js`: A foglalt időszakok lekérése és a naptár megjelenítése.
-* `js/admin.js`: Az adminisztrátori foglaláslista, valamint a státuszok és fizetések módosítása.
+* `frontend/js/booking.js`: A foglalási űrlap kezelése és az adatok elküldése.
+* `frontend/js/calendar.js`: A foglalt időszakok lekérése és a naptár megjelenítése.
+* `frontend/js/admin.js`: Az adminisztrátori foglaláslista, valamint a státuszok és fizetések módosítása.
 
 A frontend a `fetch()` függvény segítségével küld HTTP-kéréseket a backendnek. A szerver az adatbázisban végrehajtja a szükséges műveleteket, majd JSON-formátumban választ küld.
 

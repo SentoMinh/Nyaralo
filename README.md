@@ -154,3 +154,40 @@ mód - Fizetési státusz
 
 Az admin az alábbi műveleteket végezheti: - Foglalás elfogadása -
 Foglalás elutasítása - Foglalás lemondása - Fizetési státusz módosítása
+
+## 11. Projektstruktúra
+
+A projekt a következő könyvtárstruktúrába van rendezve:
+
+```
+Nyaralo/
+├── backend/                  # Szerveroldali kód és végpontok
+│   ├── .env                  # Környezeti változók
+│   ├── .env.example          # Környezeti változók sablonja
+│   ├── app.js                # Express szerver
+│   ├── foglalas.http         # API tesztkérések
+│   ├── package.json          # Backend függőségek
+│   └── package-lock.json
+├── database/                 # Adatbázis fájlok és sémák
+│   ├── database.sql          # Adatbázis séma (táblák)
+│   ├── tesztadatok.sql       # Tesztadatok betöltése
+│   └── nyaralo.db            # SQLite 3 adatbázisfájl
+├── docs/                     # Részletes dokumentációk
+│   ├── backend.md            # Backend technikai leírás
+│   ├── database.md           # Adatbázis dokumentáció
+│   └── dokument.md           # Rendszer dokumentáció
+├── frontend/                 # Felhasználói és admin felület
+│   ├── admin.html            # Adminisztrátori felület
+│   ├── index.html            # Vendégoldal (főoldal)
+│   ├── css/
+│   │   └── style.css         # Egyedi stíluslap
+│   └── js/
+│       ├── admin.js          # Admin felület logikája
+│       ├── booking.js        # Foglalási űrlap és validáció
+│       ├── calendar.js       # Foglaltsági naptár
+│       ├── config.js         # Nyaraló adatok és konfiguráció
+│       └── nyaralo.js        # Korábbi kliensoldali kód
+├── .gitignore                # Git által figyelmen kívül hagyott fájlok
+├── package.json              # Gyökér szintű npm konfiguráció és indító parancsok
+└── README.md                 # Általános projektismertető
+```

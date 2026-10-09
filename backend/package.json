@@ -2,10 +2,9 @@
   "name": "nyaralo",
   "version": "1.0.0",
   "description": "A projekt célja egy egyszerű, reszponzív webalkalmazás létrehozása,\r amely egyetlen nyaraló bemutatását és foglalását teszi lehetővé.",
-  "main": "backend/app.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node backend/app.js",
-    "backend": "npm --prefix backend start"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",

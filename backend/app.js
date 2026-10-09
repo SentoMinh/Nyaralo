@@ -1,14 +1,29 @@
 const express = require("express");
+const path = require("path");
+const cors = require("cors");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const sqlite3 = require("sqlite3");
+require("dotenv").config({ path: path.resolve(__dirname, ".env") });
+
 const app = express();
 app.use(express.json());
-const cors = require('cors');
 app.use(cors());
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const sqlite3 = require('sqlite3');
-require('dotenv').config();
+app.use(express.static(path.resolve(__dirname, "../frontend")));
 
-const db = new sqlite3.Database(process.env.DATABASE);
+app.get("/", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../frontend/index.html"));
+});
+
+app.get("/admin", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../frontend/admin.html"));
+});
+
+const dbPath = process.env.DATABASE
+    ? (path.isAbsolute(process.env.DATABASE) ? process.env.DATABASE : path.resolve(__dirname, process.env.DATABASE))
+    : path.resolve(__dirname, '../database/nyaralo.db');
+
+const db = new sqlite3.Database(dbPath);
 
 // token ellenőrzése middleware-rel (forma: Bearer token)
 function authenticateToken(req, res, next) {
@@ -185,5 +200,6 @@ app.patch("/api/bookings/:id/payment", function (req, res) {
 
 const port = process.env.PORT || 3000;
 app.listen(port, function () {
-    console.log(`Szerver elindítva a ${port}-es porton...`);
+    console.log(`Szerver elindítva: http://localhost:${port}`);
+    console.log(`Admin felület: http://localhost:${port}/admin`);
 }); 

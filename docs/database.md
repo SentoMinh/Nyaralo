@@ -1,15 +1,15 @@
 # A `nyaralo.db` adatbázis
 
-A `nyaralo.db` egy **SQLite 3** adatbázisfájl a projekt gyökerében. Ebben
+A `nyaralo.db` egy **SQLite 3** adatbázisfájl a `database/` mappában. Ebben
 tárolódnak a foglalások és az adminisztrátorok. Külön adatbázisszervert nem
 kell telepíteni, az egész adatbázis ez az egy fájl.
 
 | | |
 |---|---|
 | Adatbázis-kezelő | SQLite 3 |
-| Fájl | `nyaralo.db` |
-| Séma | [database.sql](database.sql) |
-| Tesztadatok | [tesztadatok.sql](tesztadatok.sql) |
+| Fájl | `database/nyaralo.db` |
+| Séma | [database.sql](../database/database.sql) |
+| Tesztadatok | [tesztadatok.sql](../database/tesztadatok.sql) |
 | Táblák | `foglalasok`, `admin` |
 
 A `nyaralo.db` szerepel a `.gitignore`-ban, ezért **nincs fent a repóban**.
@@ -96,21 +96,21 @@ hozzányúlni.
 **1. Táblák létrehozása**
 
 ```
-node -e "const fs=require('fs');const s=require('sqlite3');new s.Database('nyaralo.db').exec(fs.readFileSync('database.sql','utf8'))"
+node -e "const fs=require('fs');const s=require('sqlite3');new s.Database('database/nyaralo.db').exec(fs.readFileSync('database/database.sql','utf8'))"
 ```
 
 **2. Tesztadatok betöltése** (nem kötelező)
 
 ```
-node -e "const fs=require('fs');const s=require('sqlite3');new s.Database('nyaralo.db').exec(fs.readFileSync('tesztadatok.sql','utf8'))"
+node -e "const fs=require('fs');const s=require('sqlite3');new s.Database('database/nyaralo.db').exec(fs.readFileSync('database/tesztadatok.sql','utf8'))"
 ```
 
 A parancsok PowerShellben és Git Bashben is működnek. Ha telepítve van az
 `sqlite3` parancssori program, azzal is megy:
 
 ```
-sqlite3 nyaralo.db ".read database.sql"
-sqlite3 nyaralo.db ".read tesztadatok.sql"
+sqlite3 database/nyaralo.db ".read database/database.sql"
+sqlite3 database/nyaralo.db ".read database/tesztadatok.sql"
 ```
 
 A `database.sql` újra lefuttatható (`CREATE TABLE IF NOT EXISTS`), a meglévő
