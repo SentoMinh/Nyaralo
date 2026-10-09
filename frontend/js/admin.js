@@ -46,20 +46,28 @@ function statusClass(s) {
 }
 
 async function updateStatus(id, status) {
-  await fetch(`${API_BASE}/bookings/${id}/status`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ statusz: status })
-  });
-  loadAdminBookings();
+  try {
+    await fetch(`${API_BASE}/bookings/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ statusz: status })
+    });
+    loadAdminBookings();
+  } catch (e) {
+    console.error('Nem sikerült módosítani a státuszt:', e);
+  }
 }
 
 async function updatePayment(id, fizetes) {
-  await fetch(`${API_BASE}/bookings/${id}/payment`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fizetes })
-  });
+  try {
+    await fetch(`${API_BASE}/bookings/${id}/payment`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fizetes })
+    });
+  } catch (e) {
+    console.error('Nem sikerült módosítani a fizetési státuszt:', e);
+  }
 }
 
 loadAdminBookings();

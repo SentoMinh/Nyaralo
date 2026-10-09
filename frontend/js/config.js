@@ -30,7 +30,9 @@ const NYARALO = {
   ]
 };
 
-const API_BASE = "http://localhost:3000/api"; // Backend URL
+const API_BASE = (typeof window !== 'undefined' && window.location.protocol.startsWith('http') && window.location.port !== '5500')
+  ? `${window.location.origin}/api`
+  : 'http://localhost:3000/api';
 const BANK = {
   szamlaszam: "12345678-12345678-12345678",
   kedvezmenyezett: "Kovács János",
