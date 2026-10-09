@@ -1,0 +1,132 @@
+### ============================================================
+### Balatoni Nyaraló – Foglalási REST API tesztek
+### Használat: VS Code + REST Client extension
+### ============================================================
+
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### ----------------------------------------------------------
+### 1. Sikeres foglalási kérelem (happy path)
+### Elvárt: 201 Created vagy 200 OK + foglalás azonosító
+### ----------------------------------------------------------
+POST {{baseUrl}}/api/foglalas
+Content-Type: {{contentType}}
+
+{
+  "nev": "Teszt Elek",
+  "email": "teszt.elek@example.com",
+  "telefon": "+36301234567",
+  "erkezes": "2026-07-15",
+  "tavozas": "2026-07-18",
+  "vendegek": 4,
+  "fizetesiMod": "atutalas"
+}
+
+### ----------------------------------------------------------
+### 2. Hiányzó kötelező mező (név nélkül)
+### Elvárt: 400 Bad Request + hibaüzenet
+### ----------------------------------------------------------
+POST {{baseUrl}}/api/foglalas
+Content-Type: {{contentType}}
+
+{
+  "email": "teszt@example.com",
+  "telefon": "+36301234567",
+  "erkezes": "2026-07-15",
+  "tavozas": "2026-07-18",
+  "vendegek": 2,
+  "fizetesiMod": "keszpenz"
+}
+
+### ----------------------------------------------------------
+### 3. Érvénytelen e-mail formátum
+### Elvárt: 400 Bad Request
+### ----------------------------------------------------------
+POST {{baseUrl}}/api/foglalas
+Content-Type: {{contentType}}
+
+{
+  "nev": "Teszt Elek",
+  "email": "nem-email",
+  "telefon": "+36301234567",
+  "erkezes": "2026-07-15",
+  "tavozas": "2026-07-18",
+  "vendegek": 2,
+  "fizetesiMod": "atutalas"
+}
+
+### ----------------------------------------------------------
+### 4. Vendégszám túl nagy (max 6 a HTML szerint)
+### Elvárt: 400 Bad Request
+### ----------------------------------------------------------
+POST {{baseUrl}}/api/foglalas
+Content-Type: {{contentType}}
+
+{
+  "nev": "Teszt Elek",
+  "email": "teszt@example.com",
+  "telefon": "+36301234567",
+  "erkezes": "2026-07-15",
+  "tavozas": "2026-07-18",
+  "vendegek": 10,
+  "fizetesiMod": "atutalas"
+}
+
+### ----------------------------------------------------------
+### 5. Távozás korábbi, mint az érkezés
+### Elvárt: 400 Bad Request
+### ----------------------------------------------------------
+POST {{baseUrl}}/api/foglalas
+Content-Type: {{contentType}}
+
+{
+  "nev": "Teszt Elek",
+  "email": "teszt@example.com",
+  "telefon": "+36301234567",
+  "erkezes": "2026-07-20",
+  "tavozas": "2026-07-15",
+  "vendegek": 2,
+  "fizetesiMod": "keszpenz"
+}
+
+### ----------------------------------------------------------
+### 6. Minimum éjszaka alatti foglalás (min. 2 éjszaka)
+### Elvárt: 400 Bad Request
+### ----------------------------------------------------------
+POST {{baseUrl}}/api/foglalas
+Content-Type: {{contentType}}
+
+{
+  "nev": "Teszt Elek",
+  "email": "teszt@example.com",
+  "telefon": "+36301234567",
+  "erkezes": "2026-07-15",
+  "tavozas": "2026-07-16",
+  "vendegek": 2,
+  "fizetesiMod": "atutalas"
+}
+
+### ----------------------------------------------------------
+### 7. Már foglalt időszak (ha van naptár / ütközésellenőrzés)
+### Elvárt: 409 Conflict
+### ----------------------------------------------------------
+POST {{baseUrl}}/api/foglalas
+Content-Type: {{contentType}}
+
+{
+  "nev": "Teszt Elek",
+  "email": "teszt@example.com",
+  "telefon": "+36301234567",
+  "erkezes": "2026-08-01",
+  "tavozas": "2026-08-05",
+  "vendegek": 3,
+  "fizetesiMod": "atutalas"
+}
+
+### ----------------------------------------------------------
+### 8. Foglalások listázása (ha van GET végpont)
+### Elvárt: 200 OK + tömb
+### ----------------------------------------------------------
+GET {{baseUrl}}/api/foglalas
+Accept: application/json
