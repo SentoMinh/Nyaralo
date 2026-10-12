@@ -25,6 +25,13 @@ GET {{baseUrl}}/api/bookings?status=elfogadva
 Accept: application/json
 
 ### ------------------------------------------------------------
+### 2b. Naptár adatok lekérése (Elfogadott és függőben lévő időszakok státusszal)
+### Elvárt: 200 OK + erkezes, tavozas, statusz mezők
+### ------------------------------------------------------------
+GET {{baseUrl}}/api/bookings?status=naptar
+Accept: application/json
+
+### ------------------------------------------------------------
 ### 3. Sikeres foglalási kérelem beküldése (Happy path)
 ### Elvárt: 201 Created + { id: ..., message: "Foglalási kérelem rögzítve." }
 ### ------------------------------------------------------------
@@ -149,6 +156,25 @@ Content-Type: {{contentType}}
   "vendegek": 2,
   "fizetesiMod": "atutalas",
   "osszeg": 84000
+}
+
+### ------------------------------------------------------------
+### 9b. Ütközésvizsgálat: Időpont ütközik függőben lévő foglalási kérelemmel
+### (Megjegyzés: 2026-10-23 és 2026-10-27 között függőben lévő foglalás van)
+### Elvárt: 409 Conflict + "A választott időszakra már érkezett függőben lévő foglalási kérelem."
+### ------------------------------------------------------------
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "nev": "Második Érdeklődő",
+  "email": "masodik@example.com",
+  "telefon": "+36301112233",
+  "erkezes": "2026-10-24",
+  "tavozas": "2026-10-26",
+  "vendegek": 2,
+  "fizetesiMod": "atutalas",
+  "osszeg": 56000
 }
 
 ### ============================================================

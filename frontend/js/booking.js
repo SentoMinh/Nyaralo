@@ -53,15 +53,17 @@ document.getElementById('booking-form')?.addEventListener('submit', async (e) =>
     return;
   }
 
-  // Ütközés ellenőrzés (acceptedBookings-ból)
+  // Ütközés ellenőrzés (acceptedBookings-ból, amely a naptár összes foglalt/függő időszakát tartalmazza)
   if (typeof acceptedBookings !== 'undefined' && Array.isArray(acceptedBookings)) {
-    const conflict = acceptedBookings.some(b => {
-      const bStart = new Date(b.erkezes);
-      const bEnd = new Date(b.tavozas);
-      return start < bEnd && end > bStart;
+    const conflictBooking = acceptedBookings.find(b => {
+      return data.erkezes < b.tavozas && data.tavozas > b.erkezes;
     });
-    if (conflict) {
-      showError('A választott időszak már foglalt.');
+    if (conflictBooking) {
+      if (conflictBooking.statusz === 'fuggo') {
+        showError('A választott időszakra már érkezett függőben lévő foglalási kérelem.');
+      } else {
+        showError('A választott időszak már foglalt.');
+      }
       return;
     }
   }

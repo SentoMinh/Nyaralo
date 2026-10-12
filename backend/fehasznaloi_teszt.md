@@ -83,6 +83,19 @@ Elvárt eredmény:
 
 A rendszer jelzi, hogy az időszak már foglalt („A választott időszak már foglalt.”), és nem engedi a foglalást.
 
+6b. Időpontütközés (függőben lévő kérelem)
+Tesztazonosító: UAT-FOGL-06B
+
+Előfeltétel: 2026-10-23 és 2026-10-27 között már van függőben lévő foglalási kérelem.
+Lépések:
+
+Próbálj foglalni: érkezés 2026-10-24, távozás 2026-10-26.
+Küldés.
+
+Elvárt eredmény:
+
+A rendszer jelzi, hogy a választott időszakra már érkezett függőben lévő foglalási kérelem („A választott időszakra már érkezett függőben lévő foglalási kérelem.”), és nem engedi a foglalást.
+
 7. Admin – Foglalás elfogadása
 Tesztazonosító: UAT-ADMIN-01
 

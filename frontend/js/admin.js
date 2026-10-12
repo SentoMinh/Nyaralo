@@ -47,26 +47,36 @@ function statusClass(s) {
 
 async function updateStatus(id, status) {
   try {
-    await fetch(`${API_BASE}/bookings/${id}/status`, {
+    const res = await fetch(`${API_BASE}/bookings/${id}/status`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ statusz: status })
     });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      alert(result.message || 'Nem sikerült módosítani a státuszt.');
+    }
     loadAdminBookings();
   } catch (e) {
     console.error('Nem sikerült módosítani a státuszt:', e);
+    alert('Hálózati hiba történt a státusz módosításakor.');
   }
 }
 
 async function updatePayment(id, fizetes) {
   try {
-    await fetch(`${API_BASE}/bookings/${id}/payment`, {
+    const res = await fetch(`${API_BASE}/bookings/${id}/payment`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fizetes })
     });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      alert(result.message || 'Nem sikerült módosítani a fizetési státuszt.');
+    }
   } catch (e) {
     console.error('Nem sikerült módosítani a fizetési státuszt:', e);
+    alert('Hálózati hiba történt a fizetési státusz módosításakor.');
   }
 }
 

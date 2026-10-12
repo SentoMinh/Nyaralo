@@ -33,6 +33,7 @@ A backend API-végpontokon keresztül biztosítja a különböző műveletek vé
 | HTTP-metódus | Végpont                          | Funkció                           |
 | ------------ | -------------------------------- | --------------------------------- |
 | GET          | `/api/bookings`                  | A foglalások lekérése             |
+| GET          | `/api/bookings?status=naptar`    | A naptárhoz szükséges időszakok (elfogadott és függőben) lekérése |
 | GET          | `/api/bookings?status=elfogadva` | Az elfogadott foglalások lekérése |
 | POST         | `/api/bookings`                  | Új foglalási kérelem létrehozása  |
 | PATCH        | `/api/bookings/:id/status`       | A foglalás állapotának módosítása |
@@ -60,7 +61,7 @@ A fontosabb ellenőrzések:
 * A fizetési módnak érvényesnek kell lennie.
 * A teljes árnak pozitív értéknek kell lennie.
 
-A rendszer azt is ellenőrzi, hogy a kiválasztott időszak ütközik-e már elfogadott foglalással. Ha átfedést talál, a szerver `409 Conflict` státuszkóddal visszautasítja a kérelmet.
+A rendszer azt is ellenőrzi, hogy a kiválasztott időszak ütközik-e már elfogadott vagy függőben lévő foglalási kérelemmel. Ha átfedést talál, a szerver `409 Conflict` státuszkóddal visszautasítja a kérelmet (megakadályozva, hogy két vendég ugyanarra az időpontra küldjön foglalási kérelmet).
 
 Sikeres ellenőrzés esetén a foglalási kérelem rögzítésre kerül. Az új foglalás alapértelmezett állapota „Függőben”, fizetési állapota pedig „Nincs fizetve”.
 

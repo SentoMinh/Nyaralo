@@ -185,10 +185,20 @@ const FIZETESI_STATUSZOK = { nincs: 'Nincs fizetve', var: 'Fizetésre vár', fiz
 const DATUM_MINTA = /^\d{4}-\d{2}-\d{2}$/;
 
 app.route("/api/bookings")
-    // ?status=elfogadva: a foglalt időszakok a naptárhoz, egyébként az összes foglalás az admin oldalhoz
+    // ?status=naptar: a naptárhoz szükséges elfogadott és függőben lévő időszakok
+    // ?status=elfogadva: visszamenőleges kompatibilitás, csak az elfogadott foglalások
+    // egyébként: az összes foglalás az admin oldalhoz
     .get(function (req, res) {
-        let q = "SELECT erkezes, tavozas FROM foglalasok WHERE statusz = 'Elfogadva' ORDER BY erkezes";
-        if (req.query.status != "elfogadva") {
+        let q;
+        if (req.query.status === "naptar" || req.query.status === "foglalt") {
+            q = `SELECT erkezes, tavozas, 
+                    CASE statusz WHEN 'Elfogadva' THEN 'elfogadva' ELSE 'fuggo' END AS statusz 
+                 FROM foglalasok 
+                 WHERE statusz IN ('Elfogadva', 'Függőben') 
+                 ORDER BY erkezes`;
+        } else if (req.query.status === "elfogadva") {
+            q = "SELECT erkezes, tavozas FROM foglalasok WHERE statusz = 'Elfogadva' ORDER BY erkezes";
+        } else {
             q = `SELECT id, nev, email, telefon, erkezes, tavozas, vendegek_szama AS vendegek,
                     fizetesi_mod, teljes_ar AS osszeg, letrehozva,
                     CASE statusz WHEN 'Függőben' THEN 'fuggo' WHEN 'Elfogadva' THEN 'elfogadva'
@@ -227,13 +237,21 @@ app.route("/api/bookings")
         if (!(osszeg > 0))
             return res.status(400).send({ message: "Érvénytelen összeg!" });
 
-        // ütközés elfogadott foglalással
-        const q = "SELECT COUNT(*) AS utkozes FROM foglalasok WHERE statusz = 'Elfogadva' AND erkezes < ? AND tavozas > ?";
+        // ütközés elfogadott vagy függőben lévő foglalással
+        const q = `SELECT statusz FROM foglalasok 
+                   WHERE statusz IN ('Elfogadva', 'Függőben') 
+                     AND erkezes < ? AND tavozas > ? 
+                   ORDER BY CASE statusz WHEN 'Elfogadva' THEN 1 ELSE 2 END 
+                   LIMIT 1`;
         db.get(q, [tavozas, erkezes], function (error, row) {
             if (error)
                 return res.status(500).send({ message: error.message });
-            if (row.utkozes > 0)
+            if (row) {
+                if (row.statusz === 'Függőben') {
+                    return res.status(409).send({ message: "A választott időszakra már érkezett függőben lévő foglalási kérelem." });
+                }
                 return res.status(409).send({ message: "A választott időszak már foglalt." });
+            }
 
             const q2 = "INSERT INTO foglalasok (nev, email, telefon, erkezes, tavozas, vendegek_szama, fizetesi_mod, teljes_ar) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             db.run(q2, [nev, email, telefon, erkezes, tavozas, vendegek, fizetesiMod, osszeg], function (error) {
@@ -251,14 +269,40 @@ app.patch("/api/bookings/:id/status", function (req, res) {
     const statusz = STATUSZOK[req.body.statusz];
     if (!statusz)
         return res.status(400).send({ message: "Érvénytelen státusz!" });
-    const q = "UPDATE foglalasok SET statusz = ? WHERE id = ?";
-    db.run(q, [statusz, req.params.id], function (error) {
-        if (error)
-            return res.status(500).send({ message: error.message });
-        if (this.changes == 0)
-            return res.status(404).send({ message: "Nincs ilyen foglalás!" });
-        res.send({ message: "Státusz módosítva." });
-    });
+
+    if (statusz === 'Elfogadva') {
+        // Ellenőrzés: nem ütközik-e már meglévő elfogadott foglalással
+        const checkQ = `
+            SELECT COUNT(*) AS utkozes 
+            FROM foglalasok f1
+            JOIN foglalasok f2 ON f2.id = ?
+            WHERE f1.id != f2.id 
+              AND f1.statusz = 'Elfogadva'
+              AND f1.erkezes < f2.tavozas 
+              AND f1.tavozas > f2.erkezes
+        `;
+        db.get(checkQ, [req.params.id], function (checkErr, row) {
+            if (checkErr)
+                return res.status(500).send({ message: checkErr.message });
+            if (row && row.utkozes > 0) {
+                return res.status(409).send({ message: "A foglalás nem fogadható el, mert az időszak már egy másik elfogadott foglalással ütközik!" });
+            }
+            applyStatusUpdate();
+        });
+    } else {
+        applyStatusUpdate();
+    }
+
+    function applyStatusUpdate() {
+        const q = "UPDATE foglalasok SET statusz = ? WHERE id = ?";
+        db.run(q, [statusz, req.params.id], function (error) {
+            if (error)
+                return res.status(500).send({ message: error.message });
+            if (this.changes == 0)
+                return res.status(404).send({ message: "Nincs ilyen foglalás!" });
+            res.send({ message: "Státusz módosítva." });
+        });
+    }
 });
 
 // fizetési státusz módosítása

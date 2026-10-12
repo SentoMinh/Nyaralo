@@ -78,9 +78,10 @@
     <section class="bg-white p-6 rounded-xl shadow">
       <h2 class="text-xl font-semibold mb-4">Szabad időpontok</h2>
       <div id="calendar" class="overflow-x-auto"></div>
-      <p class="text-sm text-gray-500 mt-3">
-        <span class="inline-block w-4 h-4 bg-green-200 rounded mr-1"></span> Szabad
-        <span class="inline-block w-4 h-4 bg-red-300 rounded ml-4 mr-1"></span> Foglalt (elfogadott)
+      <p class="text-sm text-gray-500 mt-3 flex flex-wrap items-center gap-4">
+        <span class="inline-flex items-center"><span class="inline-block w-4 h-4 bg-green-200 rounded mr-1.5"></span> Szabad</span>
+        <span class="inline-flex items-center"><span class="inline-block w-4 h-4 bg-yellow-200 border border-yellow-400 rounded mr-1.5"></span> Függőben (elbírálás alatt)</span>
+        <span class="inline-flex items-center"><span class="inline-block w-4 h-4 bg-red-300 rounded mr-1.5"></span> Foglalt (elfogadott)</span>
       </p>
     </section>
   </main>
